@@ -149,9 +149,10 @@ void OnGameUpdate()
 	if (Spells::Q->IsReady())
 	{
 		// Q logic for Combo and Harass
-		const auto Enemies = g_ObjectManager->GetChampions(false);
-		for (auto Enemy : Enemies)
+		const auto Enemy = g_Common->GetTargetFromCoreTS(Spells::Q->Range(), DamageType::Physical);
+
 		{
+			if (Enemy && Enemy->IsValidTarget())
 			if (Menu::Q::InCombo->GetBool() && Enemy->IsInRange(Spells::Q->Range()) && g_Orbwalker->IsModeActive(eOrbwalkingMode::kModeCombo))
 
 				if (Enemy && Enemy->IsValidTarget() && g_LocalPlayer->Distance(Enemy) <= 680)
@@ -183,7 +184,7 @@ void OnGameUpdate()
 		const auto Enemies = g_ObjectManager->GetMinionsEnemy();
 		for (auto Enemy : Enemies)
 
-			if (Menu::W::InLaneClear->GetBool() && Enemy->IsInRange(Spells::W->Range()) && Spells::W->IsReady() && (g_Orbwalker->IsModeActive(eOrbwalkingMode::kModeLaneClear) || g_Orbwalker->IsModeActive(eOrbwalkingMode::kModeHarass)))
+			if (Enemy && Menu::W::InLaneClear->GetBool() && Enemy->IsInRange(Spells::W->Range()) && Spells::W->IsReady() && (g_Orbwalker->IsModeActive(eOrbwalkingMode::kModeLaneClear) || g_Orbwalker->IsModeActive(eOrbwalkingMode::kModeHarass)))
 			{
 				auto WDamage = g_Common->GetSpellDamage(g_LocalPlayer, Enemy, SpellSlot::W, false) + g_LocalPlayer->AutoAttackDamage(Enemy, true);
 				if (Enemy->IsMinion() && WDamage >= Enemy->RealHealth(true, false))
